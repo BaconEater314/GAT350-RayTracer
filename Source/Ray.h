@@ -1,17 +1,29 @@
 #pragma once
+#include "Color.h"
 #include "glm/glm.hpp"
 
-struct Ray {
+struct ray_t
+{
+public:
 	glm::vec3 origin;
 	glm::vec3 direction;
 
-	Ray() = default;
-	Ray(glm::vec3 origin, glm::vec3 direction)
+	ray_t() = default;
+	ray_t(glm::vec3 origin, glm::vec3 direction)
 	{
-		origin = this->origin;
-		direction = this->direction;
+		this->origin = origin;
+		this->direction = direction;
 	}
 
-	glm::vec3 at(float t) { return origin + t*direction; }
-	//glm::vec3 operator * (float t)
+	glm::vec3 at(float t) const { return origin + direction * t; }
+	glm::vec3 operator * (float t) { return origin + direction * t; }
+};
+
+struct raycastHit_t
+{
+	glm::vec3 point;	// point of ray hit
+	glm::vec3 normal;	// normal of surface hit
+	float distance;		// distance from ray origin to hit
+
+	color3_t color;		// hit object material
 };
