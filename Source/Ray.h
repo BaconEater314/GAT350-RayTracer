@@ -1,6 +1,9 @@
 #pragma once
 #include "Color.h"
 #include "glm/glm.hpp"
+#include <memory>
+
+class Material;
 
 struct ray_t
 {
@@ -25,5 +28,5 @@ struct raycastHit_t
 	glm::vec3 normal;	// normal of surface hit
 	float distance;		// distance from ray origin to hit
 
-	color3_t color;		// hit object material
+	class Material* material;
 };

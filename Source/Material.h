@@ -16,6 +16,8 @@ public:
 	const color3_t& GetColor() const { return albedo; }
 	virtual color3_t GetEmissive() const { return color3_t{ 0, 0, 0 }; }
 
+	color3_t color;
+
 protected:
 	color3_t albedo{ 0, 0, 0 }; // surface color
 };

@@ -1,12 +1,12 @@
 #include "Material.h"
 #include "Random.h"
-#include <glm/common.hpp>
+#include <glm/glm.hpp>
 #include <iostream>
 
-/*bool Lambertian::Scatter(const ray_t& incident, const raycastHit_t& raycastHit, color3_t& attenuation, ray_t& scattered) const {
-    // set scattered ray using random direction from normal, diffuse the outgoing ray
-    scattered.origin = <raycast hit point>;
-    scattered.direction = glm::normalize(<raycast hit normal + random point on unit sphere>);
+bool Lambertian::Scatter(const ray_t& incident, const raycastHit_t& raycastHit, color3_t& attenuation, ray_t& scattered) const {
+    // set scattered ray using random direction from normal, diffuse the outgoing ray<raycast hit normal + random point on unit sphere>
+    scattered.origin = raycastHit.point;
+    scattered.direction = raycastHit.normal + random::onUnitSphere();
 
     attenuation = albedo;
 
@@ -14,17 +14,19 @@
 }
 
 bool Metal::Scatter(const ray_t& incident, const raycastHit_t& raycastHit, color3_t& attenuation, ray_t& scattered) const {
-    glm::vec3 reflected = <use glm reflect function with normalized incident direction and raycast hit normal>;
+    // <use glm reflect function with normalized incident direction and raycast hit normal>
+    glm::vec3 reflected = glm::reflect(glm::normalize(incident.direction), raycastHit.normal);
 
     // set scattered ray from reflected ray + random point in sphere (fuzz = 0 no randomness, fuzz = 1 random reflected)
     // a mirror has a fuzz value of 0 and a diffused metal surface a higher value
-    scattered.origin = <raycast hit point>;
-    scattered.direction = glm::normalize(reflected + random point on unit sphere * fuzz);
+    scattered.origin = raycastHit.point;
+    scattered.direction = glm::normalize(reflected + random::onUnitSphere() * fuzz);
 
     attenuation = albedo;
 
     // check that reflected ray is going away from surface normal (dot product (scattered direction, normal) > 0)
-    return <dot product with scattered direction and raycast hit normal) > 0;
+    // dot product with scattered direction and raycast hit normal)
+    return glm::dot(scattered.direction, raycastHit.normal) > 0;
 }
 
 // Schlick's approximation for Fresnel reflectance
@@ -73,4 +75,4 @@ bool Dielectric::Scatter(const ray_t& incident, const raycastHit_t& raycastHit, 
     attenuation = albedo;
     
     return true;
-}*/
+}
