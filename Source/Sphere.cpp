@@ -32,7 +32,7 @@ bool Sphere::Hit(const ray_t& ray, float minDistance, float maxDistance, raycast
         // solve quadratic for the nearest intersection: t = (-b - sqrt(discriminant)) / (2a)
         // use the smaller root first (closest hit along the ray).
         //(-b - sqrt(discriminant)) / (2a)
-        float t = (-b - sqrt(discriminant) / (2 * a));
+        float t = (-b - sqrt(discriminant)) / (2 * a);
         if (t > minDistance && t < maxDistance) {
             // t is the distance
             raycastHit.distance = t;
@@ -48,7 +48,7 @@ bool Sphere::Hit(const ray_t& ray, float minDistance, float maxDistance, raycast
         // if the nearest root wasn't valid, check the second one: t = (-b + sqrt(discriminant)) / (2a)
         // this is the farther intersection point where the ray exits the sphere.
         //(-b + sqrt(discriminant)) / (2a)
-        t = (-b + sqrt(discriminant) / (2 * a));
+        t = (-b + sqrt(discriminant)) / (2 * a);
         if (t > minDistance && t < maxDistance) {
             raycastHit.distance = t;
             raycastHit.point = ray.at(t);

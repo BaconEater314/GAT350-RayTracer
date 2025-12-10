@@ -5,6 +5,7 @@
 #include "Random.h"
 #include "Sphere.h"
 #include "Color.h"
+#include "Plane.h"
 
 #include <iostream>
 #include <array>
@@ -21,32 +22,47 @@ int main() {
 
 	Framebuffer framebuffer(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	//framebuffer width divided by framebuffer height (float division)
+	// place camera in scene
 	float aspectRatio = framebuffer.width / (float)framebuffer.height;
 	Camera camera(70.0f, aspectRatio);
-	camera.SetView({ 0, 0, 5 }, { 0, 0, 0 });
+	// camera eye is above plane
+	camera.SetView({ 0, 2, 5 }, { 0, 0, 0 });
 
 	Scene scene;
+
+	// create materials
 	auto red = std::make_shared<Lambertian>(color3_t{ 1.0f, 0.0f, 0.0f });
-	auto green = std::make_shared<Lambertian> (color3_t{ 0.0f, 1.0f, 0.0f });
+	auto green = std::make_shared<Lambertian>(color3_t{ 0.0f, 1.0f, 0.0f });
 	auto blue = std::make_shared<Lambertian>(color3_t{ 0.0f, 0.0f, 1.0f });
-	auto light = std::make_shared<Emissive>(color3_t{ 1.0f, 1.0f, 1.0f }, 3.0f);
+	auto light = std::make_shared<Emissive>(color3_t{ 1.0f, 1.0f, 1.0f }, 10.0f);
 	auto metal = std::make_shared<Metal>(color3_t{ 1.0f, 1.0f, 1.0f }, 0.0f);
+	std::shared_ptr<Material> materials[] = { red, green, blue, metal };
 
-	std::array<std::shared_ptr<Material>, 5> materials { red, green, blue, light, metal };
+	// place plane in scene with gray material
+	auto gray = std::make_shared<Lambertian>(color3_t{ 0.2f, 0.2f, 0.2f });
+	std::unique_ptr<Plane> plane = std::make_unique<Plane>(Transform{ glm::vec3{ 0.0f, 0.0f, 0.0f } }, gray);
+	scene.AddObject(std::move(plane));
 
-	for (int i = 0; i < 15; i++) {
-		glm::vec3 position = random::getReal(glm::vec3{ -3.0f }, glm::vec3{ 3.0f });
+	// place random spheres in the scene with different materials
+	for (int i = 0; i < 5; i++) {
+		// randomize mize size and position, place spheres on plane
+		float radius = random::getReal(0.2f, 0.5f);
+		glm::vec3 position = random::getReal(glm::vec3{ -3.0f, 0.5f, -3.0f }, glm::vec3{ 3.0f, 0.5f, 3.0f });
 
-		std::unique_ptr<Object> sphere = std::make_unique<Sphere>(Transform{ position }, random::getReal(0.2f, 1.0f), materials[random::getInt((int)materials.size())]);
+		std::unique_ptr<Object> sphere = std::make_unique<Sphere>(Transform{ position }, radius, materials[0]);
 		scene.AddObject(std::move(sphere));
 	}
 
-	//auto material = std::make_shared<Dielectric>(color3_t{1,1,1}, 1.5f);
-	//scene.AddObject(std::make_unique<>)
+	std::unique_ptr<Object> sphere = std::make_unique<Sphere>(Transform{ glm::vec3{ 0, 2, 0 } }, 1.0f, materials[0]);
+	scene.AddObject(std::move(sphere));
 
-	//std::unique_ptr<Object> sphere = std::make_unique<Sphere>(glm::vec3{ 0, 0, 0 }, 1.0f, color3_t{ 1, 0, 0 });
-	//scene.AddObject(std::move(sphere));
+
+
+
+	// draw to frame buffer
+	framebuffer.Clear({ 0, 0, 0, 255 });
+	// remove previous "static" code and replace with this
+	scene.Render(framebuffer, camera, 100);
 
 	SDL_Event event;
 	bool quit = false;
@@ -62,11 +78,6 @@ int main() {
 				quit = true;
 			}
 		}
-
-		// draw to frame buffer
-		framebuffer.Clear({ 0, 0, 0, 255 });
-		// remove previous "static" code and replace with this
-		scene.Render(framebuffer, camera, 50);
 
 		// update frame buffer, copy buffer pixels to texture
 		framebuffer.Update();

@@ -29,11 +29,10 @@ void Scene::Render(Framebuffer& framebuffer, const Camera& camera, int numSample
 				color += Trace(ray, 0.0001f, 100.0f);
 			}
 			// get average color = (color / number samples)
-			color.r = (color.r / numSamples);
-			color.g = (color.g / numSamples);
-			color.b = (color.b / numSamples);
+			color /= (float)numSamples;
 			framebuffer.DrawPoint(x, y, ColorConvert(color));
 		}
+		std::cout << y << std::endl;
 	}
 }
 
