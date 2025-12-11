@@ -51,3 +51,9 @@ RayTracer.exe [scene_file] [output_image]
 ## 📝 Contributing
 
 If you’d like to contribute improvements (support for more shading models, anti-aliasing, more complex scenes, etc.), feel free to open an Issue or submit a Pull Request!
+
+
+## Final Render
+
+<img width="1924" height="1127" alt="Screenshot 2025-12-10 182419" src="https://github.com/user-attachments/assets/7a711685-7eb9-46e6-a997-1bba0127e534" />
+
